@@ -5,6 +5,7 @@ from random import randint
 from PyQt5.QtCore import Qt, QPoint
 from PyQt5.QtGui import QPainter, QColor
 from PyQt5.QtWidgets import QWidget, QApplication
+# ---
 
 
 class Suprematism(QWidget):
