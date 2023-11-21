@@ -63,7 +63,7 @@ class Suprematism(QWidget):
             self.qp.drawPolygon(coords)
         elif self.type_figure == 'circle':
             R = randint(20, 100)
-            self.qp.setBrush(QColor(randint(0, 255), randint(0, 255), randint(0, 255)))
+            self.qp.setBrush(QColor(randint(0, 255), randint(0, 255), randint(0, 255)))  # Random color
             self.qp.drawEllipse(int(self.coor[0] - R / 2), int(self.coor[1] - R / 2), R, R)
         elif self.type_figure == 'square':
             A = randint(20, 100)
