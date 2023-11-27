@@ -1,78 +1,39 @@
+from PyQt5.QtWidgets import QMainWindow, QTableWidgetItem, QApplication
+from PyQt5 import uic
+
+import sqlite3
 import sys
-from math import sin, cos, pi
-from random import randint
-
-from PyQt5.QtCore import Qt, QPoint
-from PyQt5.QtGui import QPainter, QColor
-from PyQt5.QtWidgets import QWidget, QApplication
-# ---
 
 
-class Suprematism(QWidget):
+class MainWidget(QMainWindow):
     def __init__(self):
         super().__init__()
-        self.initUI()
-        self.setMouseTracking(True)
-        self.qp = QPainter()
-        self.coor = tuple()
-        self.type_figure = None
-        self.flag = False
+        uic.loadUi('main.ui', self)
+        self.print_db()
 
-    def initUI(self):
-        self.setGeometry(300, 300, 1000, 1000)
-        self.setWindowTitle('Рисование')
+    def print_db(self):
+        self.tableWidget.setRowCount(0)
+        con = sqlite3.connect('coffee.sqlite')
+        cur = con.cursor()
 
-    def mousePressEvent(self, event):
-        self.coor = (event.x(), event.y())
-        if event.button() == Qt.LeftButton:
-            self.type_figure = 'circle'
-            self.drawf()
-        elif event.button() == Qt.RightButton:
-            self.type_figure = 'square'
-            self.drawf()
+        res = cur.execute("""SELECT * FROM coffee""").fetchall()
+        print(res)
 
-    def mouseMoveEvent(self, event):
-        self.coor = (event.x(), event.y())
-
-    def keyPressEvent(self, event):
-        if event.key() == Qt.Key_Space:
-            self.type_figure = 'triangle'
-            self.drawf()
-
-    def drawf(self):
-        self.flag = True
-        self.update()
-
-    def paintEvent(self, event):
-        if self.flag:
-            self.qp = QPainter()
-            self.qp.begin(self)
-            self.draw_figure()
-            self.qp.end()
-
-    def draw_figure(self):
-        if self.type_figure == 'triangle':
-            A = randint(20, 100)
-            self.qp.setBrush(QColor(randint(0, 255), randint(0, 255), randint(0, 255)))
-            x, y = self.coor
-            coords = [QPoint(x, y - A),
-                      QPoint(int(x + cos(7 * pi / 6) * A),
-                             int(y - sin(7 * pi / 6) * A)),
-                      QPoint(int(x + cos(11 * pi / 6) * A),
-                             int(y - sin(11 * pi / 6) * A))]
-            self.qp.drawPolygon(coords)
-        elif self.type_figure == 'circle':
-            R = randint(20, 100)
-            self.qp.setBrush(QColor(randint(0, 255), randint(0, 255), randint(0, 255)))  # Random color
-            self.qp.drawEllipse(int(self.coor[0] - R / 2), int(self.coor[1] - R / 2), R, R)
-        elif self.type_figure == 'square':
-            A = randint(20, 100)
-            self.qp.setBrush(QColor(randint(0, 255), randint(0, 255), randint(0, 255)))
-            self.qp.drawRect(int(self.coor[0] - A / 2), int(self.coor[1] - A / 2), A, A)
+        for line in res:
+            rowPosition = self.tableWidget.rowCount()
+            self.tableWidget.insertRow(rowPosition)
+            self.tableWidget.setItem(rowPosition, 0, QTableWidgetItem(str(line[0])))
+            self.tableWidget.setItem(rowPosition, 1, QTableWidgetItem(str(line[1])))
+            self.tableWidget.setItem(rowPosition, 2, QTableWidgetItem(str(line[2])))
+            self.tableWidget.setItem(rowPosition, 3, QTableWidgetItem(str(line[3])))
+            self.tableWidget.setItem(rowPosition, 4, QTableWidgetItem(str(line[4])))
+            self.tableWidget.setItem(rowPosition, 5, QTableWidgetItem(str(line[5])))
+            self.tableWidget.setItem(rowPosition, 6, QTableWidgetItem(str(line[6])))
 
 
 if __name__ == '__main__':
     app = QApplication(sys.argv)
-    ex = Suprematism()
+    ex = MainWidget()
     ex.show()
-    sys.exit(app.exec_())
+    sys.exit(app.exec())
+
